@@ -4,12 +4,14 @@
 % and some signal-sigal-beat interference
 % power loading is used; -> inefficient, if path loss to high!
 % here channel estimation based on Golay sequence
+pkg load communications
+
 clear all
 SPEC = 1;
 
 Nsim = 200; % simulated OFDM-symbols
 
-M=32;      % QAM modulation order
+M = 16;      % QAM modulation order
 L = 0; % length in km -> kleiner Wert für Back-To-Back
 Rb=100*1.07e9;
 kClip=2.5;  % determindes the Bias
@@ -47,7 +49,7 @@ t0 = (1/fp)/Nover;          % time resolution on analog level
 S2B = de2bi(0:M-1, log2(M) ); % mapping table: Bits bn to symbols zk
 zk = randi(M, Nsim*Ncarrier, 1)-1; % symbols to be transmitted
 bk_tx = S2B(zk + 1,: );            % bits to be transmitted
-sv_tx =  reshape(qammod(zk, M, 'gray'), Ncarrier, Nsim); % each column contains the OFDM-data
+sv_tx = reshape(qammod(zk, M), Ncarrier, Nsim); % each column contains the OFDM-data
 Nbits = Nsim*Ncarrier*log2(M);
 
 % electrical Signal in f-domain, each columns contains an OFDM-symbol
@@ -151,7 +153,7 @@ if L>0
 end
 
 lf=0;
-for EbN0_dB = 10:0.1:35
+for EbN0_dB = 10:1:35
    lf=lf+1;
    EbN0=10^(EbN0_dB/10);
    N0 = Eb/EbN0; % noise power spectral density per polarization
@@ -169,7 +171,7 @@ for EbN0_dB = 10:0.1:35
    % Decision in f-domain
    Ymu = fft(yk)/N;
    sv_rx = Ymu(2:Ncarrier+1,:) .* repmat(Emu, 1, Nsim) ;
-   zk_rx =  qamdemod(sv_rx, M, 'gray'); % each column contains an OFDM-symbol
+   zk_rx =  qamdemod(sv_rx, M); % each column contains an OFDM-symbol
    zk_rx = reshape(zk_rx, Nsim*Ncarrier, 1);
 
    bk_rx = S2B(zk_rx + 1,: );            % bits received
@@ -202,9 +204,8 @@ if SPEC
   [Phi_xx, f] = pwelch( xt  , w, 0, Nwin, 1/t0, 'twosided' );
   %Phi_xx(1)=Phi_xx(2);
   f=[-Nwin/2+1:Nwin/2]*f0_2;
-  plot(f/1e9, db10(fftshift(Phi_xx/Phi_xx(2))), 'linewidth', 2);
+  plot(f/1e9, mag2db(fftshift(Phi_xx/Phi_xx(2))), 'linewidth', 2);
   axis([-75 75 -30 10])
-  SetFontSize
   title('');
   xlabel('x');
   ylabel('y');

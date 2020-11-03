@@ -3,6 +3,7 @@
 % the carrier (unmodulated) is at f=0;
 % NO signal-signal-beat interference, but  bandwidth efficiency
 % reduced by a factor of 2
+pkg load communications
 
 % TBD: 1.) Noise 2) is noise is added, which Bias is required (Pilot Power); 3.) dual drive MZMs
 
@@ -53,7 +54,7 @@ Nsim= Nsim+1; % first symbol for channel estimation
 zk = randi(M, Nsim*Ncarrier, 1)-1; % symbols to be transmitted
 bk_tx = S2B(zk(Ncarrier+1:end) + 1,: );  % bits to be transmitted; first OFDM-symbol
                                          % acts as training sequence! -> skip
-sv_tx =  reshape(qammod(zk, M, 'gray'), Ncarrier, Nsim); % each column contains the OFDM-data
+sv_tx =  reshape(qammod(zk, M), Ncarrier, Nsim); % each column contains the OFDM-data
 Nbits = (Nsim-1)*Ncarrier*log2(M);
 
 % electrical Signal in f-domain, each columns contains an OFDM-symbol
@@ -118,7 +119,7 @@ Gmu = Ymu(2:2:2*Ncarrier+1,1)./sv_tx(:,1);
 Emu = 1./Gmu; % equalizer coefficients
 
 sv_rx = Ymu(2:2:2*Ncarrier+1,:) .* repmat(Emu, 1, Nsim) ;
-zk_rx =  qamdemod(sv_rx, M, 'gray'); % each column contains an OFDM-symbol
+zk_rx =  qamdemod(sv_rx, M); % each column contains an OFDM-symbol
 zk_rx = reshape(zk_rx, Nsim*Ncarrier, 1);
 bk_rx = S2B(zk_rx(Ncarrier+1:end) + 1,: );            % bits received
 
@@ -135,9 +136,8 @@ if SPEC
   figure(2)
   [Phi_xx, f] = pwelch( yt_opt3  , w, 0, Nwin, 1/t0, 'twosided' );
   f=[-Nwin/2+1:Nwin/2]*f0;
-  plot(f/1e9, db10(fftshift(Phi_xx/Phi_xx(2))), 'linewidth', 2);
+  plot(f/1e9, mag2db(fftshift(Phi_xx/Phi_xx(2))), 'linewidth', 2);
   axis([-50 50 -30 10])
-  SetFontSize
   title('');
   xlabel('x');
   ylabel('y');
