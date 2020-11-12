@@ -133,7 +133,7 @@ Pb = sum(sum(abs(bk_tx -bk_rx))) / Nbits
 scatterplot(sv_rx(:,2));
 
 if NOISE;
-printf("NOISE on!\n")
+fprintf("NOISE on!\n")
 
 % normalized optical noise (noise power is 1)
 Nyt_opt = length(yt_opt2);
@@ -175,7 +175,7 @@ for EbN0_dB = 10:1:35
   OSNR(lf) = 10*log10( Popt / (2*N0*12.5e9) );
 
   t2 = time();
-  printf("Loop %d, t: %d, OSNR: %d, Pb: %d\n", lf, t2-t1, OSNR(lf), Pb(lf));
+  fprintf("Loop %d, t: %d, OSNR: %d, Pb: %d\n", lf, t2-t1, OSNR(lf), Pb(lf));
 end
 
 figure(1);
@@ -184,7 +184,7 @@ axis([5 40 1e-3 1]);
 xlabel('OSNR in dB');
 ylabel('BER');
 
-endif
+end
 
 % optisches Spektrum
 Nwin = (N+L)*Nover; % bestimmt spektrale Auflösung diese ist:
