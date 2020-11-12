@@ -48,6 +48,9 @@ t0 = (1/fp)/Nover;            % time resolution on simulation level
 
 % center frequency of MUX /DEMUX
 f_center = Ncarrier*f0;
+if f_center > BW_MUX/2
+  fprintf("Bandwidth too large");
+end
 
 % transmitted data symbols with values 0..M-1
 S2B = de2bi(0:M-1, log2(M) ); % mapping table: Bits bn to symbols zk
