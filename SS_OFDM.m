@@ -81,6 +81,10 @@ Bias = Rel_bias * sum(abs(xt).^2)/length(xt) ;  % referenz-carrier (LO)
 % optical signal (perfect modulator)
 xt_opt = xt + sqrt(Bias);
 
+% mean optical power at sender
+Popt = sum(abs(xt_opt).^2)/length(xt_opt);
+Eb = Popt*Tb;
+
 % only for later analysis
 i_ac = abs(xt).^2;
 i_misch = 2*real(sqrt(Bias)*conj(xt) );
@@ -99,10 +103,6 @@ else
   Ndelay2=0;
   yt_opt2 = yt_opt1;
 end
-
-% mittlere optische Leistung vor optischem Empfangsfilter (Rx-Eingang)
-Popt = sum(abs(yt_opt2).^2)/length(yt_opt2);
-Eb = Popt*Tb;
 
 % after demux
 [yt_opt3, Ndelay3] = mux2_V2(BW_MUX, f_center, 2,  t0, yt_opt2);  % Signal nach Demux ohne Rauschen
