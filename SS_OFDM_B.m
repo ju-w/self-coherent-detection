@@ -145,7 +145,7 @@ nt_op = (randn(Nyt_opt, 1) + j*randn(Nyt_opt, 1)); % orthogonal-polarization
 
 lf = 0;
 for EbN0_dB = 10:1:35
-  lf += 1;
+  lf = lf + 1;
   t1 = time();
 
   EbN0=10^(EbN0_dB/10);
