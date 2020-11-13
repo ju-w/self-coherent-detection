@@ -148,7 +148,6 @@ if SPEC
   f=[-Nwin/2+1:Nwin/2]*f0;
   plot(f/1e9, mag2db(fftshift(Phi_xx/Phi_xx(2))), 'linewidth', 2);
   axis([-80 80 -30 10])
-  SetFontSize
   title('');
   xlabel('x');
   ylabel('y');
