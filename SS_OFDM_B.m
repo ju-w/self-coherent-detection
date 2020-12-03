@@ -119,10 +119,10 @@ yk = reshape(yk_tmp(1:Nsim*(N+Lcp)), N+Lcp, Nsim);
 yk = yk(Lcp+1:end, :); % remove cyclic prefix interval
 Ymu = fft(yk)/N;
 
-Gmu = Ymu(2:2:2*Ncarrier+1,1)./sv_tx(:, 1);
+Gmu = Ymu(mu, 1)./sv_tx(:, 1);
 Emu = 1./Gmu; % equalizer coefficients
 
-sv_rx = Ymu(2:2:2*Ncarrier+1, :) .* repmat(Emu, 1, Nsim) ;
+sv_rx = Ymu(mu, :) .* repmat(Emu, 1, Nsim) ;
 zk_rx = qamdemod(sv_rx, M); % each column contains an OFDM-symbol
 zk_rx = reshape(zk_rx, Nsim*Ncarrier, 1);
 bk_rx = S2B(zk_rx(Ncarrier+1:end) + 1, :); % bits received
@@ -165,7 +165,7 @@ for EbN0_dB = 10:1:35
   yk = yk(Lcp+1:end, :); % remove cyclic prefix interval
   Ymu = fft(yk)/N;
 
-  sv_rx = Ymu(2:2:2*Ncarrier+1, :) .* repmat(Emu, 1, Nsim);
+  sv_rx = Ymu(mu, :) .* repmat(Emu, 1, Nsim);
   zk_rx = qamdemod(sv_rx, M); % each column contains an OFDM-symbol
   zk_rx = reshape(zk_rx, Nsim*Ncarrier, 1);
   bk_rx = S2B(zk_rx(Ncarrier+1:end)+1, :); % bits received
