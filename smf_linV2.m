@@ -1,7 +1,7 @@
 % linear model of single-mode fiber
 % the ouput signal is calc. in the f-domain 
 % NOTE: if x(t) exhbits a DC-offset or steps, x(t) should be filtered first (mux)
-function [yt, Ndelay] = smf_lin(alpha_dB, L, D, S, t0, xt, Bsignal);
+function [yt, Ndelay] = smf_linV2(alpha_dB, L, D, S, t0, xt, Bsignal);
 
 % note: lamba is assumed to be 1.55 mum
 % alpha_dB;     % loss in dB/km

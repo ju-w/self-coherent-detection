@@ -2,7 +2,7 @@
 % super Gauss filter (even symmetry)
 % the center wavelength (equiv. lowpass range) is 0
 
-function  [yt, Ndelay] = muxV2(B3, fc, N, t0, xt);
+function  [yt, Ndelay] = mux2_V2(B3, fc, N, t0, xt);
 
 % input paramters %%%%%%%%%%%%%%%%%%%%%%%%%%
 % B3: optical 3 dB bandwidth

@@ -1,5 +1,5 @@
-function gt=bessel_filt(fg, f_sample);
-% 5th order Bessel low-pass filter 
+function gt = gt_bessel(fg, f_sample);
+% 5th order Bessel low-pass filter
 % PARAMETERS: %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % fg: 3 dB cut-off 
 % fsample: sample frequency
