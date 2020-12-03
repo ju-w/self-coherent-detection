@@ -12,10 +12,10 @@ N_CS = N;    % lengths of complementary sequences, needs to be power of 2
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % iterative generation of Golay sequences
-P=[1 1 1 -1].';
-Q=[1 1 -1 1].';
+P = [1 1 1 -1].';
+Q = [1 1 -1 1].';
 
-for k=3:log2(N_CS);
+for k = 3:log2(N_CS);
   P_old = P;
   P = [P_old; Q];
   Q = [P_old; -Q];
@@ -36,14 +36,13 @@ y_corr2 = conv(yn, gn_B);
 
 % cross correlation for timing
 % sequence A needs to be delayes by N_CS bits, e.g., 2*N_CS samples
-psi = -y_corr1(1:end-(N_CS+2*L)) + y_corr2(1+(N_CS+2*L):end); 
+psi = -y_corr1(1:end-(N_CS+2*L)) + y_corr2(1+(N_CS+2*L):end);
 
 % now we use a sliding window to find a CP-position with max. energy
 gn_slid = ones(L, 1)/(L);
 psi2 = conv(gn_slid, (psi).^2);
 
-[tmp, indMax]=max(psi2);
+[tmp, indMax] = max(psi2);
 start_optEst = indMax-L+1;
 gn = psi(start_optEst:start_optEst+L-1) / (2*N_CS);
-CP_start = start_optEst + L + (N_CS+2*L) +1 ;
-
+CP_start = start_optEst + L + (N_CS+2*L) + 1;
