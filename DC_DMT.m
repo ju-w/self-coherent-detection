@@ -182,6 +182,10 @@ for EbN0_dB = 10:1:35
 
   t2 = time();
   fprintf("Loop %d, t: %d, OSNR: %d, Pb: %d\n", lf, t2-t1, OSNR(lf), Pb(lf));
+  if Pb(lf) < 10^-3
+    fprintf("EARLY STOP\n");
+    break;
+  end
 end
 
 %figure(2);
