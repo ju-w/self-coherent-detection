@@ -1,5 +1,5 @@
 % selfhomodyne detection of a single-sideband OFDM-signal
-% ONLY THE ODD subcarriers are used
+% ONLY THE UPPER HALF of subcarriers are used
 % the carrier (unmodulated) is at f=0;
 % NO signal-signal-beat interference, but  bandwidth efficiency
 % reduced by a factor of 2
@@ -64,8 +64,8 @@ Nbits = (Nsim-1)*Ncarrier*log2(M);
 % electrical Signal in f-domain, each columns contains an OFDM-symbol
 Xmu = zeros(N, Nsim);
 
-% Single Sideband signal, every second SC used
-mu = 2:2:2*Ncarrier+1;
+% Single Sideband signal, with spacing
+mu = (Ncarrier:Ncarrier*2-1);
 Xmu(mu, :) = sv_tx; % all the other subcarrier are set to zero -> single sideband
 
 xk = ifft(Xmu)*N;  % complex time domain signal
