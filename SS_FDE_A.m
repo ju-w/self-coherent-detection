@@ -64,7 +64,7 @@ xk_cp = reshape(xk_cp, Nblocks*(N+Lcp),1); % serial, digital transmit signal (el
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PULSE SHPING and analog signal gerneration
 %Tx-Filter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-gtTx = rcosflt([1], 1, Nover, 'sqrt', 0.5, NdelayRRC); % NdelayRRC symbols delay
+gtTx = rcosflt([1], 1, Nover, 'sqrt', Rcos, NdelayRRC); % NdelayRRC symbols delay
 xt = conv(gtTx, upsample( [xk_train; xk_cp], Nover ) ); % complex time domain signal before upconversion for single sideband
 
 t=[0:length(xt)-1]'*t0;
