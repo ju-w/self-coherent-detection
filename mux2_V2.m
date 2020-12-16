@@ -6,7 +6,7 @@ function [yt, Ndelay] = mux2_V2(B3, fc, N, t0, xt);
 
 % input paramters %%%%%%%%%%%%%%%%%%%%%%%%%%
 % B3: optical 3 dB bandwidth
-% N: filter order 1,2 or 3
+% N: filter order 1, 2 or 3
 % t0: sampling interval
 % xt:input sigal (field strength)
 % fc: center wavelength
@@ -28,11 +28,11 @@ else
   end
 end
 
-xt = [zeros(N_zp,1); xt; zeros(N_zp,1)];
+xt = [zeros(N_zp, 1); xt; zeros(N_zp, 1)];
 
 % fft
 Nfft = length(xt);
-if mod(Nfft,2)
+if mod(Nfft, 2)
   Nfft = Nfft+1;
   xt = [xt; 0];
 end

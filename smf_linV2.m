@@ -18,7 +18,7 @@ function [yt, Ndelay] = smf_linV2(alpha_dB, L, D, S, t0, xt, Bsignal);
 lambda = 1.55;             % in mum
 c = 3e5;                   % Lichtgeschwindigkeit in km/s
 beta2 = -(D*1e-6)/(2*pi*c)*(lambda*1e-6)^2;
-beta3 = (S*1e3 + 2*D*1e-6/(lambda*1e-6) ) ...
+beta3 = (S*1e3 + 2*D*1e-6/(lambda*1e-6)) ...
          * (lambda*1e-6)^4/(2*pi*c*1000)^2 * 1000;
 
 
@@ -28,11 +28,11 @@ fp = 1/t0;
 DeltaT = abs(beta2)*L*(2*pi)^2*Bsignal;
 N_zp = 2*ceil(DeltaT/t0); % zero padding interval
 
-xt = [zeros(N_zp,1); xt; zeros(N_zp,1)];
+xt = [zeros(N_zp, 1); xt; zeros(N_zp, 1)];
 
 % fft
 N = length(xt);
-if mod(N,2)
+if mod(N, 2)
   N = N+1;
   xt = [xt; 0];
 end

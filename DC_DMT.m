@@ -64,7 +64,7 @@ c = 3e5;                   % Lichtgeschwindigkeit in km/s
 beta2 = -(D*1e-6)/(2*pi*c)*(lambda*1e-6)^2;
 Gest = cos((2*pi*(mu-1)'*f0).^2*L*beta2/2);
 if L > 0
-  Xmu(mu,:) = Xmu(mu, :)./repmat(abs(Gest), 1, Nsim);
+  Xmu(mu, :) = Xmu(mu, :)./repmat(abs(Gest), 1, Nsim);
 end
 
 
@@ -128,7 +128,7 @@ nt_op = (randn(Nyt_opt, 1) + j*randn(Nyt_opt, 1)); % orthogonal-polarization
 % later channel estimation can also be based on the noise signal
 
 % Bessel filtering (analog domain)
-it_Filt = bessel_filt(fgBesselRx, 1/t0, abs(yt_opt_Filt).^2 );
+it_Filt = bessel_filt(fgBesselRx, 1/t0, abs(yt_opt_Filt).^2);
 
 % sampling with fp and random phase, yk_tmp includes the training sequence
 delta = 0; % random phase between -Nover/2 and Nover/2
@@ -189,13 +189,13 @@ for EbN0_dB = 10:1:35
 end
 
 %figure(2);
-%semilogy([10:0.1:22], Pb,'r','linewidth',2);
+%semilogy([10:0.1:22], Pb, 'r', 'linewidth', 2);
 %xlabel('E_b/N_0 in dB');
 %ylabel('BER');
 %axis([5 15 1e-3 1]);
 
 figure(1);
-semilogy(OSNR, Pb,'linewidth',2);
+semilogy(OSNR, Pb, 'linewidth', 2);
 axis([5 40 1e-3 1]);
 xlabel('OSNR in dB');
 ylabel('BER');
@@ -204,11 +204,11 @@ ylabel('BER');
 % Spektrum
 Nwin = Nover*N; % bestimmt spektrale Auflösung diese ist:
 f0_2 = 1/t0/Nwin;
-w = rectwin( Nwin );
+w = rectwin(Nwin);
 % optisches Spektrum am Tx
 if SPEC
   figure(2)
-  [Phi_xx, f] = pwelch( xt  , w, 0, Nwin, 1/t0, 'twosided' );
+  [Phi_xx, f] = pwelch(xt, w, 0, Nwin, 1/t0, 'twosided');
   %Phi_xx(1)=Phi_xx(2);
   f = [-Nwin/2+1:Nwin/2]*f0_2;
   plot(f/1e9, mag2db(fftshift(Phi_xx/Phi_xx(2))), 'linewidth', 2);

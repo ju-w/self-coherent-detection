@@ -23,7 +23,7 @@ BW_MUX = 43e9;
 
 SPEC = 1;
 
-Nover=10; % determines 'analog' time redulation t0: t0=1/fp/Nover
+Nover = 10; % determines 'analog' time redulation t0: t0=1/fp/Nover
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Tb = 1/Rb;
@@ -75,7 +75,7 @@ xk = reshape(xk, Nsim*(N+Lcp), 1); % serial, digital transmit signal (electrical
 
 % assumed analog transmit signal (here: rectangular interpolation)
 gt_tx = rect([-Nover/2:Nover/2]/Nover);
-xt = conv(gt_tx, upsample([zeros(Ntrain,1); xk], Nover));
+xt = conv(gt_tx, upsample([zeros(Ntrain, 1); xk], Nover));
 xt = conv(xt, gt_bessel(fgBesselTx, 1/t0))*t0;
 
 Bias = Rel_bias * sum(abs(xt).^2)/length(xt); % referenz-carrier (LO)
@@ -130,7 +130,7 @@ bk_rx = S2B(zk_rx(Ncarrier+1:end) + 1, :); % bits received
 % BER
 Pb = sum(sum(abs(bk_tx-bk_rx))) / Nbits
 
-% scatterplot(sv_rx(:,2));
+% scatterplot(sv_rx(:, 2));
 
 if NOISE;
 fprintf("NOISE on!\n")
@@ -156,7 +156,7 @@ for EbN0_dB = 10:1:35
   it_Rx = abs(yt_opt3 + nt_cpFilt * sqrt(N0/(2*t0))).^2 ...
         + abs(          nt_opFilt * sqrt(N0/(2*t0))).^2; % elektrischer Strom
 
-  it_Filt = bessel_filt(fgBesselRx, 1/t0, it_Rx ); % elektrischer Strom
+  it_Filt = bessel_filt(fgBesselRx, 1/t0, it_Rx); % elektrischer Strom
   Ndelay = Ndelay1 + Ndelay2 + Ndelay3 + Ntrain*Nover-Lcp/2*Nover + 2*Nover;
 
   yk_tmp = it_Filt(1+Ndelay:Nover:end); % down-sampled Rx-signal
@@ -183,7 +183,7 @@ for EbN0_dB = 10:1:35
 end
 
 figure(1);
-semilogy(OSNR, Pb,'linewidth',2);
+semilogy(OSNR, Pb, 'linewidth', 2);
 axis([5 40 1e-3 1]);
 xlabel('OSNR in dB');
 ylabel('BER');

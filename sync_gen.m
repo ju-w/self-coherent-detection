@@ -25,8 +25,8 @@ N_yn = length(yn);
 
 % 2 matched filters
 
-gn_A = zeros(N_CS,1);
-gn_B = zeros(N_CS,1);
+gn_A = zeros(N_CS, 1);
+gn_B = zeros(N_CS, 1);
 
 gn_A(1:end) = P(end:-1:1);
 gn_B(1:end) = Q(end:-1:1);

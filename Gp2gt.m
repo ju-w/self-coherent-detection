@@ -11,6 +11,6 @@ t0 = 1/fs;
 t = 0:t0:tmax;
 N = length(t)-1;
 
-xin = [1, zeros(1,N)];
+xin = [1, zeros(1, N)];
 y = filter(a_dig, b_dig, xin);
 gt = y(1:N+1)*fs;

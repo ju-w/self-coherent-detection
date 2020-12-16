@@ -34,7 +34,7 @@ Ncarrier = N/2-20; % number of indep. modulated subcarriers
 Ntrain = 100;    % Ntrain zeros as preamble
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Tofdm= log2(M)/Rb*Ncarrier;   % duration of an OFDM symbol in seconds
+Tofdm = log2(M)/Rb*Ncarrier;   % duration of an OFDM symbol in seconds
 Tfft = N / (N+Lcp) * Tofdm;   % FFT-window size in seconds
 f0 = 1/Tfft;                % spacing between subcarriers in Hz
 fp = N*f0;                  % sampling frequency (at Tx DAC)
@@ -52,13 +52,13 @@ if f_center > BW_MUX/2
 end
 
 % transmitted data symbols with values 0..M-1
-S2B = de2bi(0:M-1, log2(M) ); % mapping table: Bits bn to symbols zk
+S2B = de2bi(0:M-1, log2(M)); % mapping table: Bits bn to symbols zk
 Nsim = Nsim+1;                 % first symbol for channel estimation
 zk = randi(M, Nsim*Ncarrier, 1)-1; % symbols to be transmitted
 bk_tx = S2B(zk(Ncarrier+1:end)+1, :); % bits to be transmitted; first OFDM-symbol
                                       % acts for channel estimation
 sv_tx = reshape(qammod(zk, M), Ncarrier, Nsim); % each column contains the OFDM-data
-sv_tx(2:2:end,1) = 0; % for channel estimation only odd carriers
+sv_tx(2:2:end, 1) = 0; % for channel estimation only odd carriers
 Nbits = (Nsim-1)*Ncarrier*log2(M);
 
 % electrical Signal in f-domain, each columns contains an OFDM-symbol
@@ -71,11 +71,11 @@ Xmu(mu, :) = sv_tx; % all the other subcarrier are set to zero -> single sideban
 xk = ifft(Xmu)*N;  % complex time domain signal
 xk = [xk(end-Lcp+1:end, :); xk];   % Tx vector with CP (still:
                                   % each column is an OFDM-symbol)
-xk = reshape(xk, Nsim*(N+Lcp),1); % serial, digital transmit signal (electrical)
+xk = reshape(xk, Nsim*(N+Lcp), 1); % serial, digital transmit signal (electrical)
 
 % assumed analog transmit signal (here: rectangular interpolation)
 gt_tx = rect([-Nover/2:Nover/2]/Nover);
-xt = conv(gt_tx, upsample([zeros(Ntrain,1); xk], Nover));
+xt = conv(gt_tx, upsample([zeros(Ntrain, 1); xk], Nover));
 xt = conv(xt, gt_bessel(fgBesselTx, 1/t0))*t0;
 
 Bias = Rel_bias * sum(abs(xt).^2)/length(xt) ;  % referenz-carrier (LO)
@@ -124,10 +124,10 @@ yk = yk(Lcp+1:end, :); % remove cyclic prefix interval
 Ymu = fft(yk)/N;
 
 % channel estimation on odd subcarriers
-Emu = zeros(Ncarrier,1);
+Emu = zeros(Ncarrier, 1);
 mu = 1:2:Ncarrier;
-Emu(mu) = sv_tx(mu,1) ./ Ymu(mu+1,1);
-Emu(mu+1) = interp1(mu, Emu(mu), mu+1, 'linear','extrap' ); % linear interpol.
+Emu(mu) = sv_tx(mu, 1) ./ Ymu(mu+1, 1);
+Emu(mu+1) = interp1(mu, Emu(mu), mu+1, 'linear', 'extrap'); % linear interpol.
 
 sv_rx = Ymu(2:Ncarrier+1, :) .* repmat(Emu, 1, Nsim) ;
 zk_rx = qamdemod(sv_rx, M); % each column contains an OFDM-symbol
@@ -137,8 +137,8 @@ bk_rx = S2B(zk_rx(Ncarrier+1:end) + 1, :);            % bits received
 % BER
 Pb = sum(sum(abs(bk_tx -bk_rx))) / Nbits
 
-%stem(real(sv_tx(1:2:end,3:end))-real(sv_rx(:,3:end)))
-scatterplot(sv_rx(1:end,2));
+%stem(real(sv_tx(1:2:end, 3:end))-real(sv_rx(:, 3:end)))
+scatterplot(sv_rx(1:end, 2));
 
 if NOISE;
 fprintf("NOISE on!\n")
@@ -164,7 +164,7 @@ for EbN0_dB = 10:1:35
   it_Rx = abs(yt_opt3 + nt_cpFilt * sqrt(N0/(2*t0))).^2 ...
         + abs(          nt_opFilt * sqrt(N0/(2*t0))).^2; % elektrischer Strom
 
-  it_Filt = bessel_filt(fgBesselRx, 1/t0, it_Rx ); % elektrischer Strom
+  it_Filt = bessel_filt(fgBesselRx, 1/t0, it_Rx); % elektrischer Strom
   Ndelay = Ndelay1 + Ndelay2 + Ndelay3 + Ntrain*Nover-Lcp/2*Nover + 2*Nover;
 
   yk_tmp = it_Filt(1+Ndelay:Nover:end); % down-sampled Rx-signal
@@ -191,7 +191,7 @@ for EbN0_dB = 10:1:35
 end
 
 figure(1);
-semilogy(OSNR, Pb,'linewidth',2);
+semilogy(OSNR, Pb, 'linewidth', 2);
 axis([5 40 1e-3 1]);
 xlabel('OSNR in dB');
 ylabel('BER');
@@ -204,7 +204,7 @@ w = rectwin(Nwin);
 f0 = 1/t0/Nwin;
 if SPEC
   figure(2)
-  [Phi_xx, f] = pwelch( yt_opt3  , w, 0, Nwin, 1/t0, 'twosided' );
+  [Phi_xx, f] = pwelch(yt_opt3, w, 0, Nwin, 1/t0, 'twosided');
   f = [-Nwin/2+1:Nwin/2]*f0;
   plot(f/1e9, mag2db(fftshift(Phi_xx/Phi_xx(2))), 'linewidth', 2);
   axis([-80 80 -30 10])
