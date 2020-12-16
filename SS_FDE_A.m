@@ -1,5 +1,7 @@
 % Single Sideband
 % Single carrier Frequency domain 
+pkg load communications
+
 clear all
 close all
 
@@ -56,7 +58,7 @@ zk = randi(M, Nblocks*N, 1)-1; % symbols to be transmitted
 bk_tx = S2B( zk+1,: ); % bits to be transmitted
 
 
-xk = reshape(qammod(zk, M, 'gray'), N, Nblocks); % each column contains a data block
+xk = reshape(qammod(zk, M), N, Nblocks); % each column contains a data block
 
 xk_cp = [xk(end-Lcp+1:end,:) ;xk];   % Tx vector with CP (still: % each column is an OFDM-symbol)
 xk_cp = reshape(xk_cp, Nblocks*(N+Lcp),1); % serial, digital transmit signal (electrical) before pulse shaping
@@ -64,7 +66,8 @@ xk_cp = reshape(xk_cp, Nblocks*(N+Lcp),1); % serial, digital transmit signal (el
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PULSE SHPING and analog signal gerneration
 %Tx-Filter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-gtTx = rcosflt([1], 1, Nover, 'sqrt', Rcos, NdelayRRC); % NdelayRRC symbols delay
+tt = -NdelayRRC:1/Nover:NdelayRRC; % NdelayRRC symbols delay
+gtTx = rrc(tt, Rcos, 1);
 xt = conv(gtTx, upsample( [xk_train; xk_cp], Nover ) ); % complex time domain signal before upconversion for single sideband
 
 t=[0:length(xt)-1]'*t0;
@@ -156,9 +159,8 @@ if SPEC
   figure(3)
   [Phi_xx, f] = pwelch( xt_opt  , w, 0, Nwin, 1/t0, 'twosided' );
   f=[-Nwin/2+1:Nwin/2]*f0;
-  plot(f/1e9, db10(fftshift(Phi_xx/Phi_xx(2))), 'linewidth', 2);
+  plot(f/1e9, mag2db(fftshift(Phi_xx/Phi_xx(2))), 'linewidth', 2);
   axis([-50 80 -30 70])
-  SetFontSize
   title('');
   xlabel('x');
   ylabel('y');
