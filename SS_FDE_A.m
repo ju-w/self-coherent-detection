@@ -8,6 +8,8 @@ close all
 SPEC = 1;
 Nblocks = 2; % round( 1/PbRef / N );
 
+NOISE = 1;
+
 M = 16;
 L = 100; % length in km -> kleiner Wert für Back-To-Back
 Rb = 40*1.07e9;
@@ -154,10 +156,79 @@ bk_rx = S2B(zk_rx(:) + 1, :); % bits received
 % BER
 Pb = sum(sum(abs(bk_tx-bk_rx))) / Nbits
 
-scatterplot(sv_rx(1:end,1));
+% scatterplot(sv_rx(1:end,1));
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if NOISE;
+fprintf("NOISE on!\n")
+
+% normalized optical noise (noise power is 1)
+Nyt_opt = length(yt_opt2);
+nt_cp = (randn(Nyt_opt, 1) + j*randn(Nyt_opt, 1)); % co-polarized
+nt_op = (randn(Nyt_opt, 1) + j*randn(Nyt_opt, 1)); % orthogonal-polarization
+
+[nt_cpFilt] = muxV2(BW_MUX, 2,  t0, nt_cp); % coploarized noise (same polarization as signal)
+[nt_opFilt, dummy] = muxV2(BW_MUX, 2,  t0, nt_op); % orthogonal noise
+
+lf = 0;
+for EbN0_dB = 10:1:35
+  lf = lf + 1;
+  t1 = time();
+
+  EbN0 = 10^(EbN0_dB/10);
+  N0 = Eb/EbN0; % noise power spectral density per polarization
+
+  % RX
+  % current after Rx-filter
+  it_Rx = abs(yt_opt3 + nt_cpFilt * sqrt(N0/(2*t0))).^2 ...
+        + abs(          nt_opFilt * sqrt(N0/(2*t0))).^2; % elektrischer Strom
+
+  %  here an anlog down-conversion is assumed
+  t=[0:length(it_Rx)-1]'*t0;
+  it_complex = it_Rx.*exp(-j*2*pi*t*DeltaF); % frequeny shifting to get a complex baseband signal
+
+  % Rx-filtering
+  gtRx = gtTx;
+  it_complex = conv( it_complex, gtRx );
+
+
+  % fractional sampling
+  yk_tmp = it_complex(1+Ndelay+2*(Lcp+N)*Nover:Nover/2:end); % 2*(Lcp+N)*Nover due to Golay
+  yk = reshape( yk_tmp(1:(Nblocks)*(N+Lcp)*2), (N+Lcp)*2, Nblocks ); % only data part
+  yk = yk(2*Lcp+1:end,:); % remove cyclic prefix interval
+
+  Ymu = fft(yk); % spectrum
+
+  % normiertes Signal nach Equalizer
+  Ymu = Ymu .* repmat(Emu, 1, Nblocks) ; %
+  idx=[1:N];
+  YmuE = 0.5*(Ymu(idx,:) + Ymu(idx+N,:)); % Downsampling in f
+  sv_rx = ifft( YmuE );
+
+  zk_rx = qamdemod(sv_rx, M); % each column contains an OFDM-symbol
+  zk_rx = reshape(zk_rx, N*Nblocks, 1);
+  bk_rx = S2B(zk_rx(:) + 1, :); % bits received
+
+
+  % BER
+  Pb(lf) = sum(sum(abs(bk_tx -bk_rx))) / Nbits;
+  OSNR(lf) = 10*log10( Popt / (2*N0*12.5e9) );
+
+  t2 = time();
+  fprintf("Loop %d, t: %d, OSNR: %d, Pb: %d\n", lf, t2-t1, OSNR(lf), Pb(lf));
+  if Pb(lf) < 10^-3
+    fprintf("EARLY STOP\n");
+    break;
+  end
+end
+
+figure(1);
+semilogy(OSNR, Pb, 'linewidth', 2);
+axis([5 40 1e-3 1]);
+xlabel('OSNR in dB');
+ylabel('BER');
+
+end
+
 % optisches Spektrum
 Nwin = (N+L)*Nover; % bestimmt spektrale Auflösung diese ist:
 w = rectwin(Nwin);
