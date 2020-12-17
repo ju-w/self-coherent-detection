@@ -43,7 +43,8 @@ fp = N*f0;                  % sampling frequency (at Tx DAC)
 t0 = (1/fp)/Nover;          % time resolution on simulation level
 
 fgBesselTx = fp*0.75;            % electrical Bessel filter 3 dB cut-off
-fgBesselRx = fgBesselTx;
+fgElec = 0.5*Rb/log2(M)*(N+Lcp)/N; % electrical cut-off freq. of spec.
+fgBesselRx = fgElec*0.75;
 
 % center frequency of MUX /DEMUX
 f_center = Ncarrier/2*f0;

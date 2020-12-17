@@ -41,7 +41,8 @@ f0 = 1/Tfft;                  % spacing between subcarriers in Hz
 fp = N*f0;                    % sampling frequency (at Tx DAC)
 
 fgBesselTx = fp*0.75;            % electrical Bessel filter 3 dB cut-off
-fgBesselRx = fgBesselTx;
+fgElec = Rb/log2(M)*(N+Lcp)/N; % cut-off freq. of electrical spectrum
+fgBesselRx = fgElec*0.75;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 t0 = (1/fp)/Nover;            % time resolution on simulation level
