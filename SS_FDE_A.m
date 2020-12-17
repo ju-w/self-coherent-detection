@@ -56,6 +56,7 @@ fs = 1/t0; % correction to have integer number of symples per symbol interval
 S2B = de2bi(0:M-1, log2(M)); % mapping table: Bits bn to symbols zk
 zk = randi(M, Nblocks*N, 1)-1; % symbols to be transmitted
 bk_tx = S2B(zk+1, :); % bits to be transmitted
+Nbits = N*Nblocks*log2(M);
 
 
 xk = reshape(qammod(zk, M), N, Nblocks); % each column contains a data block
@@ -146,6 +147,12 @@ idx = [1:N];
 YmuE = 0.5*(Ymu(idx, :) + Ymu(idx+N, :)); % Downsampling in f
 sv_rx = ifft(YmuE);
 
+zk_rx = qamdemod(sv_rx, M); % each column contains an OFDM-symbol
+zk_rx = reshape(zk_rx, N*Nblocks, 1);
+bk_rx = S2B(zk_rx(:) + 1, :); % bits received
+
+% BER
+Pb = sum(sum(abs(bk_tx-bk_rx))) / Nbits
 
 scatterplot(sv_rx(1:end,1));
 
